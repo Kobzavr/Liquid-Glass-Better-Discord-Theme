@@ -1,0 +1,1888 @@
+/**
+ * @name Apple Liquid Glass
+ * @description An Apple Liquid Glass (iOS 26 / visionOS / macOS Tahoe) theme for Discord with optical lens edges, chromatic edge dispersion, floating glass islands, and compact message bubbles. Built on top of the Midnight layout base.
+ * @author Kobzavr
+ * @version 1.0.0
+ * @website https://github.com/Kobzavr/Liquid-Glass-Better-Discord-Theme
+ * @source https://github.com/Kobzavr/Liquid-Glass-Better-Discord-Theme/blob/main/LiquidGlass.theme.css
+ */
+
+/* Base layout module from Midnight (by refact0r) for separated floating panels */
+@import url('https://refact0r.github.io/midnight-discord/build/midnight.css');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+
+/* Custom theme switches (CSS Houdini) */
+@property --chromatic-glass {
+    syntax: 'off | on';
+    inherits: true;
+    initial-value: off;
+}
+
+@property --compact-messages {
+    syntax: 'off | on';
+    inherits: true;
+    initial-value: on;
+}
+
+@property --toolbar-glass-islands {
+    syntax: 'off | on';
+    inherits: true;
+    initial-value: on;
+}
+
+@property --floating-bars {
+    syntax: 'off | on';
+    inherits: true;
+    initial-value: on;
+}
+
+@property --floating-top-bar {
+    syntax: 'off | on';
+    inherits: true;
+    initial-value: off;
+}
+
+@property --dynamic-glass-hover {
+    syntax: 'off | on';
+    inherits: true;
+    initial-value: on;
+}
+
+/* ==========================================================================
+   1. MAIN THEME SWITCHES & LAYOUT OPTIONS
+   ========================================================================== */
+body {
+    /* --- FEATURE TOGGLES (on / off) --- */
+    --compact-messages: on;
+    /* on: fit-content message bubbles (iMessage / Telegram style)
+       off: wide merged message groups per user */
+
+    --floating-bars: on;
+    /* on: bottom chat input capsule floats over scrolling messages with backdrop blur
+       off: standard separated chat input bar */
+
+    --floating-top-bar: off;
+    /* on: top channel header floats over scrolling messages
+       off: top channel header stays separated at the top (default) */
+
+    --dynamic-glass-hover: on;
+    /* on: subtle visionOS-like micro-lift and specular boost on hover
+       off: static hover highlight without scaling */
+
+    --toolbar-glass-islands: on;
+    /* on: groups chatbar action buttons into a frosted glass capsule island
+       off: individual default icons */
+
+    --chromatic-glass: on;
+    /* off: pure silver-white Apple Liquid Glass edge refraction
+       on: enables cyan/magenta/violet chromatic dispersion along glass edges */
+
+    /* --- TYPOGRAPHY & SPACING --- */
+    --font: 'figtree', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter';
+    --code-font: 'SF Mono', 'JetBrains Mono', Consolas, monospace;
+    font-weight: 400;
+
+    --gap: 12px;
+    --divider-thickness: 3px;
+    --border-thickness: 0px;
+
+    --animations: on;
+    --list-item-transition: 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    --dms-icon-svg-transition: 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    --border-hover-transition: 0.25s ease;
+
+    --top-bar-height: var(--gap);
+    --top-bar-button-position: titlebar;
+    --top-bar-title-position: off;
+    --subtle-top-bar-title: off;
+    --custom-window-controls: on;
+    --window-control-size: 14px;
+
+    /* --- TOP-LEFT HOME / DM BUTTON ICON --- */
+    --custom-dms-icon: custom;
+    /* Option 1 (Default): Apple Liquid Prism (4-point glass prism + orbital sparkles with counter-rotating parallax) */
+    --dms-icon-svg-url: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M12 2.2C12.45 7.8 16.2 11.55 21.8 12C16.2 12.45 12.45 16.2 12 21.8C11.55 16.2 7.8 12.45 2.2 12C7.8 11.55 11.55 7.8 12 2.2Z'/></svg>");
+    --dms-sparkles-svg-url: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M18.8 1.8C18.96 3.75 20.05 4.84 22 5C20.05 5.16 18.96 6.25 18.8 8.2C18.64 6.25 17.55 5.16 15.6 5C17.55 4.84 18.64 3.75 18.8 1.8ZM5.2 16.2C5.32 17.75 6.25 18.68 7.8 18.8C6.25 18.92 5.32 19.85 5.2 21.4C5.08 19.85 4.15 18.92 2.6 18.8C4.15 18.68 5.08 17.75 5.2 16.2Z'/></svg>");
+
+    /* Option 2 (Uncomment the 2 lines below for the classic Apple logo): */
+    /* --dms-icon-svg-url: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.96 6.33c.67-.81 1.12-1.94 1-3.08-.96.04-2.13.64-2.82 1.45-.61.7-.115 1.85-.99 2.97 1.08.08 2.14-.53 2.81-1.34'/></svg>"); */
+    /* --dms-sparkles-svg-url: none; */
+
+    /* Option 3 (Uncomment the 2 lines below for a Liquid Glass Droplet icon): */
+    /* --dms-icon-svg-url: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M12 2.1C12 2.1 5.5 9.6 5.5 14.8C5.5 18.5 8.4 21.5 12 21.5C15.6 21.5 18.5 18.5 18.5 14.8C18.5 9.6 12 2.1 12 2.1ZM9.8 18.2C8.3 17.5 7.4 15.9 7.6 14.1C7.7 13.6 8.2 13.3 8.6 13.5C9 13.6 9.3 14.1 9.2 14.5C9.1 15.6 9.6 16.5 10.5 16.9C10.9 17.1 11.1 17.6 10.9 18C10.7 18.3 10.2 18.4 9.8 18.2Z'/></svg>"); */
+    /* --dms-sparkles-svg-url: none; */
+
+    --dms-icon-svg-size: 66%;
+    --dms-icon-color-before: hsla(210, 40%, 96%, 0.92);
+    --dms-icon-color-after: hsl(0, 0%, 100%);
+    --custom-dms-background: color;
+    --dms-background-color: radial-gradient(circle at 30% 25%, hsla(200, 100%, 75%, 0.32), hsla(230, 85%, 60%, 0.14) 65%, transparent 100%);
+
+    --background-image: off;
+    --background-image-url: url('');
+
+    --transparency-tweaks: on;
+    --remove-bg-layer: on;
+    --panel-blur: on;
+    --blur-amount: var(--blur-strength);
+    --bg-floating: var(--popout-color);
+
+    --custom-chatbar: separated;
+    --chatbar-height: 44px;
+    --small-user-panel: on;
+}
+
+/* ==========================================================================
+   2. GLASS OPACITY, BLUR, OPTICAL CONTOUR & RADII SETTINGS
+   ========================================================================== */
+:root {
+    --colors: on;
+
+    /* --- TRANSPARENCY & FROST OPACITY (0% - 100%) --- */
+    --window-frost-opacity: 40%;
+    /* Global window tint behind panels for text readability */
+    --panel-glass-opacity: 48%;
+    /* Main panel glass density (chat, header, member list) */
+    --sidebar-glass-opacity: 54%;
+    /* Server and channel sidebar glass density */
+    --message-glass-opacity: 30%;
+    /* Chat message bubble glass density */
+    --popout-glass-opacity: 66%;
+    /* Popouts, modals, and context menus glass density */
+    --compact-message-max-width: 78%;
+    /* Maximum width of compact message bubbles (--compact-messages: on) */
+
+    /* --- BLUR & SATURATION --- */
+    --blur-strength: 22px;
+    /* Main panel blur radius (12px - 36px) */
+    --popout-blur: 26px;
+    /* Popout and floating chatbar blur radius */
+    --liquid-glass-saturation: 155%;
+    /* Backdrop color saturation boost */
+    --liquid-glass-brightness: 1.01;
+    /* Backdrop brightness multiplier */
+
+    /* --- GLASS EDGE GLOW & CHROMATIC DISPERSION --- */
+    --glass-edge-glow: 68%;
+    /* Outer specular rim brightness (0% - 100%) */
+    --glass-inner-ring: 42%;
+    /* Inward glass refraction gradient intensity (0% - 100%) */
+    --chromatic-aberration: 65%;
+    /* Edge chromatic dispersion strength when --chromatic-glass: on */
+    --light-angle: 42deg;
+
+    /* --- SQUIRCLE & CAPSULE RADII --- */
+    --app-radius: 22px;
+    --popout-radius: 24px;
+    --card-radius: 18px;
+    --message-radius: 18px;
+    --message-group-sm-radius: 7px;
+    --list-item-radius: 14px;
+    --textarea-radius: 24px;
+    --button-radius: 999px;
+    --input-radius: 999px;
+
+    --radius-lg: var(--app-radius) !important;
+    --radius-md: var(--card-radius) !important;
+    --radius-sm: var(--list-item-radius) !important;
+    --radius-xs: 10px !important;
+
+    /* --- OPTICAL 3-STEP LENS BEVEL PALETTE ---
+       1. Bright outer specular rim
+       2. Dark refractive optical trough
+       3. Soft inward glass gradient */
+    --c-glass-base: #0a0d14;
+    --c-sidebar-base: #070a10;
+    --c-light: #ffffff;
+    --c-dark: #030508;
+
+    --ca-cyan: color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.22), transparent);
+    --ca-magenta: color-mix(in srgb, #dce8ff calc(var(--glass-edge-glow) * 0.16), transparent);
+    --ca-bottom-prism: color-mix(in srgb, #ffffff calc(var(--glass-inner-ring) * 0.18), transparent);
+
+    --edge-bright: color-mix(in srgb, var(--c-light) calc(var(--glass-edge-glow) * 0.62), transparent);
+    --edge-medium: color-mix(in srgb, var(--c-light) calc(var(--glass-edge-glow) * 0.36), transparent);
+    --edge-subtle: color-mix(in srgb, var(--c-light) calc(var(--glass-edge-glow) * 0.15), transparent);
+    --ring-inner: color-mix(in srgb, var(--c-light) calc(var(--glass-inner-ring) * 0.34), transparent);
+
+    --glass-surface-gradient: linear-gradient(135deg,
+            hsla(0, 0%, 100%, 0.055) 0%,
+            hsla(0, 0%, 100%, 0.012) 38%,
+            transparent 65%,
+            hsla(220, 30%, 5%, 0.08) 100%);
+
+    --glass-button-gradient: linear-gradient(45deg,
+            color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.16), transparent) 0%,
+            transparent 24%,
+            transparent 76%,
+            color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.14), transparent) 100%);
+
+    --liquid-glass-shadow:
+        inset 1.5px -1.5px 1.2px -0.5px var(--edge-bright),
+        inset -1.5px 1.5px 1.2px -0.5px var(--edge-bright),
+        inset 0 2.5px 2px -1px hsla(220, 45%, 2%, 0.52),
+        inset 2.5px 0 2px -1px hsla(220, 45%, 2%, 0.38),
+        inset -2.5px 0 2px -1px hsla(220, 45%, 2%, 0.38),
+        inset 0 5px 4.5px -2px var(--ring-inner),
+        inset 5px 0 4.5px -2px var(--ca-cyan),
+        inset -5px 0 4.5px -2px var(--ca-magenta),
+        inset 0 -5px 5.5px -2px var(--ca-bottom-prism),
+        inset 0 0 0 1px var(--edge-subtle),
+        0 4px 14px -2px hsla(0, 0%, 0%, 0.32);
+
+    --liquid-glass-shadow-hover:
+        inset 2px -2px 1.5px -0.5px color-mix(in srgb, var(--c-light) calc(var(--glass-edge-glow) * 0.80), transparent),
+        inset -2px 2px 1.5px -0.5px color-mix(in srgb, var(--c-light) calc(var(--glass-edge-glow) * 0.74), transparent),
+        inset 0 2.5px 2px -1px hsla(220, 45%, 2%, 0.58),
+        inset 2.5px 0 2px -1px hsla(220, 45%, 2%, 0.44),
+        inset -2.5px 0 2px -1px hsla(220, 45%, 2%, 0.44),
+        inset 0 6px 5.5px -2px color-mix(in srgb, var(--c-light) calc(var(--glass-inner-ring) * 0.48), transparent),
+        inset 6px 0 5.5px -2px var(--ca-cyan),
+        inset -6px 0 5.5px -2px var(--ca-magenta),
+        inset 0 -6px 6.5px -2px var(--ca-bottom-prism),
+        inset 0 0 0 1px var(--edge-medium),
+        0 8px 22px -3px hsla(0, 0%, 0%, 0.42);
+
+    --popout-shadow-border:
+        inset 0 1px 1px 0 var(--edge-bright),
+        inset 1.5px -1.5px 1.2px -0.8px var(--edge-medium),
+        inset -1.5px 1.5px 1.2px -0.8px var(--edge-medium),
+        inset 0 2.5px 2px -1px hsla(220, 45%, 2%, 0.48),
+        inset 2.5px 0 2px -1px hsla(220, 45%, 2%, 0.34),
+        inset -2.5px 0 2px -1px hsla(220, 45%, 2%, 0.34),
+        inset 0 5px 5px -2.5px color-mix(in srgb, var(--c-light) calc(var(--glass-inner-ring) * 0.28), transparent),
+        inset 5px 0 5px -2.5px var(--ca-cyan),
+        inset -5px 0 5px -2.5px var(--ca-magenta),
+        inset 0 -5px 6px -2.5px var(--ca-bottom-prism),
+        inset 0 0 0 1px hsla(0, 0%, 100%, 0.12);
+
+    --popout-shadow: 0 20px 48px -8px hsla(0, 0%, 0%, 0.52);
+    --panel-shadow: 0 10px 30px -6px hsla(0, 0%, 0%, 0.34);
+    --popout-header-shadow: 0 2px 10px 0 hsla(0, 0%, 0%, 0.18);
+    --card-header-shadow: 0 2px 8px 0 hsla(0, 0%, 0%, 0.18);
+
+    --panel-backdrop-filter: blur(var(--blur-strength)) saturate(var(--liquid-glass-saturation)) brightness(var(--liquid-glass-brightness));
+
+    /* --- SURFACE & TEXT TOKENS --- */
+    --window-frost-color: color-mix(in srgb, #060911 var(--window-frost-opacity), transparent);
+    --bg-4: color-mix(in srgb, var(--c-glass-base) var(--panel-glass-opacity), transparent);
+    --bg-3: color-mix(in srgb, var(--c-sidebar-base) var(--sidebar-glass-opacity), transparent);
+    --bg-2: hsla(220, 20%, 95%, 0.11);
+    --bg-1: hsla(220, 20%, 95%, 0.18);
+
+    --sidebar-color: var(--bg-3);
+    --main-content-color: var(--bg-4);
+    --popout-color: color-mix(in srgb, var(--c-glass-base) var(--popout-glass-opacity), transparent);
+    --liquid-glass-color-subtle: hsla(0, 0%, 100%, 0.075);
+
+    --hover: hsla(0, 0%, 100%, 0.085);
+    --active: hsla(0, 0%, 100%, 0.14);
+    --active-2: hsla(0, 0%, 100%, 0.22);
+    --message-hover: hsla(0, 0%, 100%, 0.06);
+
+    --message-color: color-mix(in srgb, #080b12 var(--message-glass-opacity), transparent);
+    --message-color-hover: color-mix(in srgb, #101622 calc(var(--message-glass-opacity) + 10%), transparent);
+    --message-padding-top: 9px;
+    --message-padding-side: 16px;
+
+    --card-color: hsla(0, 0%, 100%, 0.08);
+    --card-color-hover: hsla(0, 0%, 100%, 0.13);
+    --card-color-select: hsla(0, 0%, 100%, 0.18);
+
+    --textarea-color: 255, 255, 255;
+    --textarea-alpha: 0.095;
+    --textarea-alpha-focus: 0.15;
+    --textarea-text-color: hsl(0, 0%, 99%);
+    --textarea-placeholder-color: hsla(220, 15%, 86%, 0.62);
+    --textarea-block-color: hsla(220, 25%, 5%, 0.40);
+    --textarea-block-text-color: hsl(220, 20%, 92%);
+    --input-height: 36px;
+
+    --button-height: 34px;
+    --button-padding: 16px;
+    --button-action-color: hsl(0, 0%, 100%);
+    --button-border: hsla(0, 0%, 100%, 0.20);
+
+    --text-0: hsl(220, 25%, 10%);
+    --text-1: hsl(0, 0%, 100%);
+    --text-2: hsl(220, 30%, 93%);
+    --text-3: hsl(220, 20%, 86%);
+    --text-4: hsl(220, 15%, 70%);
+    --text-5: hsl(220, 12%, 54%);
+
+    --accent-hue: 212;
+    --accent-saturation: 90%;
+    --accent-lightness: 68%;
+    --accent-hsl: var(--accent-hue), var(--accent-saturation), var(--accent-lightness);
+    --accent-opacity: 0.82;
+    --accent-text-color: hsl(220, 30%, 8%);
+    --accent-secondary-color: hsla(212, 60%, 30%, 0.38);
+    --accent-secondary-text-color: hsl(0, 0%, 98%);
+
+    --alert-hue: 356;
+    --alert-saturation: 80%;
+    --alert-lightness: 60%;
+    --alert-hsl: var(--alert-hue), var(--alert-saturation), var(--alert-lightness);
+    --alert-opacity: 0.85;
+    --alert-text-color: hsl(0, 0%, 100%);
+
+    --reply-hue: 255;
+    --reply-saturation: 85%;
+    --reply-lightness: 70%;
+    --reply-hsl: var(--reply-hue), var(--reply-saturation), var(--reply-lightness);
+    --reply-opacity: 0.90;
+
+    --mention-hue: 255;
+    --mention-saturation: 85%;
+    --mention-lightness: 70%;
+    --mention-hsl: var(--mention-hue), var(--mention-saturation), var(--mention-lightness);
+    --mention-opacity: 0.90;
+
+    --self-hue: 204;
+    --self-saturation: 92%;
+    --self-lightness: 66%;
+    --self-hsl: var(--self-hue), var(--self-saturation), var(--self-lightness);
+
+    --blue-1: oklch(80% 0.11 235);
+    --blue-2: oklch(75% 0.12 235);
+    --blue-3: oklch(70% 0.12 235);
+    --blue-4: oklch(65% 0.12 235);
+    --blue-5: oklch(60% 0.12 235);
+
+    --green-1: oklch(78% 0.12 165);
+    --green-2: oklch(73% 0.12 165);
+    --green-3: oklch(68% 0.12 165);
+    --green-4: oklch(63% 0.12 165);
+    --green-5: oklch(58% 0.12 165);
+
+    --red-1: oklch(76% 0.14 15);
+    --red-2: oklch(71% 0.14 15);
+    --red-3: oklch(66% 0.14 15);
+    --red-4: oklch(61% 0.14 15);
+    --red-5: oklch(56% 0.14 15);
+
+    --yellow-1: oklch(82% 0.12 85);
+    --yellow-2: oklch(77% 0.12 85);
+    --yellow-3: oklch(72% 0.12 85);
+    --yellow-4: oklch(67% 0.12 85);
+    --yellow-5: oklch(62% 0.12 85);
+
+    --purple-1: oklch(78% 0.12 305);
+    --purple-2: oklch(73% 0.12 305);
+    --purple-3: oklch(68% 0.12 305);
+    --purple-4: oklch(63% 0.12 305);
+    --purple-5: oklch(58% 0.12 305);
+
+    --accent-1: var(--blue-1);
+    --accent-2: var(--blue-2);
+    --accent-3: var(--blue-3);
+    --accent-4: var(--blue-4);
+    --accent-5: var(--blue-5);
+    --accent-new: var(--red-2);
+
+    --mention: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 22%, transparent) 0%, transparent 100%);
+    --mention-hover: linear-gradient(90deg, color-mix(in srgb, var(--accent-2) 30%, transparent) 0%, transparent 100%);
+    --reply: linear-gradient(90deg, color-mix(in srgb, var(--purple-2) 20%, transparent) 0%, transparent 100%);
+    --reply-hover: linear-gradient(90deg, color-mix(in srgb, var(--purple-2) 28%, transparent) 0%, transparent 100%);
+
+    --online: var(--green-2);
+    --dnd: var(--red-2);
+    --idle: var(--yellow-2);
+    --streaming: var(--purple-2);
+    --offline: var(--text-4);
+
+    --border-light: hsla(0, 0%, 100%, 0.09);
+    --border: hsla(0, 0%, 100%, 0.15);
+    --border-hover: hsla(0, 0%, 100%, 0.28);
+
+    --transition-time: 240ms;
+    --transition-type: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   CHROMATIC EDGE DISPERSION (--chromatic-glass: on)
+   Keeps panel centers crystal clear while concentrating cyan/magenta/violet
+   prismatic dispersion along the glass edges
+   ========================================================================== */
+@container body style(--chromatic-glass: on) {
+    #app-mount {
+        --ca-cyan: color-mix(in srgb, #00f0ff calc(var(--chromatic-aberration) * 0.42), transparent);
+        --ca-magenta: color-mix(in srgb, #ff3cf7 calc(var(--chromatic-aberration) * 0.38), transparent);
+        --ca-bottom-prism: color-mix(in srgb, #b833ff calc(var(--chromatic-aberration) * 0.34), transparent);
+
+        --glass-surface-gradient: linear-gradient(135deg,
+                color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.10), transparent) 0%,
+                color-mix(in srgb, #00f0ff calc(var(--chromatic-aberration) * 0.04), transparent) 12%,
+                transparent 32%,
+                transparent 72%,
+                color-mix(in srgb, #ff3cf7 calc(var(--chromatic-aberration) * 0.04), transparent) 90%,
+                color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.07), transparent) 100%);
+
+        --glass-button-gradient: linear-gradient(45deg,
+                color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.22), transparent) 0%,
+                color-mix(in srgb, #00f0ff calc(var(--chromatic-aberration) * 0.08), transparent) 14%,
+                transparent 30%,
+                transparent 70%,
+                color-mix(in srgb, #ff3cf7 calc(var(--chromatic-aberration) * 0.08), transparent) 86%,
+                color-mix(in srgb, #ffffff calc(var(--glass-edge-glow) * 0.18), transparent) 100%);
+    }
+}
+
+/* ==========================================================================
+   3. TRANSPARENT WINDOW BACKDROP & GLASS SCROLLBARS
+   ========================================================================== */
+html,
+body,
+#app-mount,
+.appMount_gEkNtR,
+.app_QbT-Jy,
+.app_YRXZu0,
+.layers_QbT-Jy,
+.layer_Fd0FEH,
+.base_pog62O,
+.content_pog62O,
+.page_pog62O,
+.sidebar_pog62O,
+.chat_z_gUBg,
+.container_zrUwGA,
+.tabBody_zrUwGA,
+.homeWrapper_8iSxT3,
+.applicationStore_6U3jXZ,
+.container_XH4OpX,
+.privateChannels_u88IQl,
+.scroller_Bce46W,
+.membersWrap_86es0b,
+.members_86es0b,
+.members_86es0b>div,
+.member_Iy0c7A,
+.member_86es0b,
+.channelChatWrapper_hbKzX7,
+.wrapper_hbKzX7,
+.root_rTsZa_ {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+#app-mount::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background: var(--window-frost-color) !important;
+    backdrop-filter: blur(var(--blur-strength)) saturate(var(--liquid-glass-saturation)) !important;
+    -webkit-backdrop-filter: blur(var(--blur-strength)) saturate(var(--liquid-glass-saturation)) !important;
+}
+
+@container body style(--background-image: on) {
+    #app-mount .bg_Fd0FEH {
+        background: var(--background-image-url) center / cover no-repeat !important;
+        filter: blur(var(--blur-strength)) brightness(0.75) saturate(130%) !important;
+        transform: scale(1.06);
+    }
+}
+
+#app-mount * {
+    text-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.38);
+}
+
+/* Slim macOS / iOS style glass scrollbars */
+::-webkit-scrollbar {
+    width: 8px !important;
+    height: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsla(0, 0%, 100%, 0.16) !important;
+    border-radius: 999px !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+    box-shadow: inset 0 1px 0 hsla(0, 0%, 100%, 0.35) !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: hsla(0, 0%, 100%, 0.30) !important;
+    border: 2px solid transparent !important;
+    background-clip: padding-box !important;
+}
+
+.chatGradientBase_8AE1Qq,
+.chatGradient_8AE1Qq,
+.chatTypingGradientAtBottom_8AE1Qq,
+.chatTypingGradientNotAtBottom_8AE1Qq,
+.children_ybUK7Z::after,
+.content_z_gUBg::before,
+.sidebar_pog62O::after {
+    display: none !important;
+    background: transparent !important;
+}
+
+.wrapper_5dqHTG {
+    mask: none !important;
+}
+
+::selection {
+    background: hsla(var(--accent-hsl), 0.55) !important;
+    color: var(--text-1) !important;
+    text-shadow: none !important;
+}
+
+/* ==========================================================================
+   4. FLOATING GLASS PANELS & TOOLBAR ISLANDS
+   ========================================================================== */
+.container_rhYbEd>.toolbar_rhYbEd,
+.container_rhYbEd>.contentContainer_rhYbEd,
+.guilds_pog62O,
+.sidebarList_pog62O,
+.panels_pog62O,
+.chat_z_gUBg>.subtitleContainer_z_gUBg,
+.chatContent_z_gUBg,
+.messagesWrapper_8AE1Qq,
+#app-mount .channelTextArea_z_gUBg,
+.wrapper_ST_Y69,
+.container_86es0b,
+.content_z_gUBg>.membersWrap_86es0b,
+.container_zrUwGA>.container_ybUK7Z,
+.container_nMe-a6>.container_ybUK7Z,
+.homeWrapper_8iSxT3>.container_ybUK7Z,
+.container_FrbQJp>.container_ybUK7Z,
+.container_UU236g>.container_ybUK7Z,
+.peopleColumn_zrUwGA,
+.nowPlayingColumn_zrUwGA,
+.mainPageScroller_IRnLy8,
+.headerBar_tSk_LE,
+.scroller_jkJlMe,
+.container_nMe-a6>.content_z_gUBg,
+.shop_Mqg79R,
+.content_z_gUBg>aside>.outer_P1YEjQ,
+.searchResultsWrap_QHVbp3,
+.container_BkGrJJ,
+.chat_UU236g,
+.container_I4BhVZ,
+.callContainer_hbKzX7,
+.wrapper_hbKzX7.sidebarOpen_hbKzX7 .callContainer_hbKzX7,
+.callContainer_DwQMm_,
+.chat_z_gUBg>.header_zjGJlN,
+.chat_z_gUBg>.scrollerBase_tqapBM,
+.chat_z_gUBg>.header_xTP3zy,
+.chat_z_gUBg>.container_xTP3zy {
+    background-color: var(--bg-4) !important;
+    background-image: var(--glass-surface-gradient) !important;
+    border-radius: var(--app-radius) !important;
+    border: none !important;
+    box-shadow: var(--popout-shadow-border), var(--panel-shadow) !important;
+    backdrop-filter: var(--panel-backdrop-filter) !important;
+    -webkit-backdrop-filter: var(--panel-backdrop-filter) !important;
+    transition:
+        box-shadow var(--transition-time) var(--transition-type),
+        background-color var(--transition-time) var(--transition-type) !important;
+}
+
+@container body style(--custom-chatbar: separated) {
+    .chatContent_z_gUBg {
+        background: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+}
+
+/* Floating bottom chat input bar (--floating-bars: on) */
+@container body style(--floating-bars: on) {
+    .chatContent_z_gUBg {
+        position: relative !important;
+    }
+
+    .messagesWrapper_8AE1Qq {
+        height: 100% !important;
+        margin: 0 !important;
+    }
+
+    .messagesWrapper_8AE1Qq::before {
+        display: none !important;
+    }
+
+    .scroller_8AE1Qq {
+        mask-image: linear-gradient(to bottom,
+                transparent 0px,
+                black 14px,
+                black 100%) !important;
+        -webkit-mask-image: linear-gradient(to bottom,
+                transparent 0px,
+                black 14px,
+                black 100%) !important;
+    }
+
+    .scrollerSpacer_8AE1Qq {
+        height: calc(var(--chatbar-height, 52px) + 26px) !important;
+    }
+
+    .scroller_8AE1Qq::-webkit-scrollbar-track {
+        margin-bottom: calc(var(--chatbar-height, 52px) + 22px) !important;
+    }
+
+    .chatContent_z_gUBg>.form_z_gUBg {
+        position: absolute !important;
+        bottom: 10px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        z-index: 101 !important;
+        pointer-events: none !important;
+    }
+
+    .chatContent_z_gUBg>.form_z_gUBg>* {
+        pointer-events: auto !important;
+    }
+
+    .channelBottomBarArea_z_gUBg {
+        margin-top: 0 !important;
+    }
+
+    #app-mount .channelTextArea_z_gUBg {
+        background-color: color-mix(in srgb, var(--c-glass-base) 58%, transparent) !important;
+        background-image: var(--glass-button-gradient) !important;
+        backdrop-filter: blur(28px) saturate(180%) brightness(1.02) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.02) !important;
+        box-shadow:
+            var(--liquid-glass-shadow-hover),
+            0 14px 34px -6px hsla(0, 0%, 0%, 0.52) !important;
+    }
+
+    /* Floating glass "typing..." indicator pill */
+    .typing_U9Tvvz {
+        position: absolute !important;
+        top: -32px !important;
+        left: 14px !important;
+        right: auto !important;
+        width: fit-content !important;
+        height: 24px !important;
+        padding: 0 12px !important;
+        border-radius: 999px !important;
+        background-color: var(--popout-color) !important;
+        background-image: var(--glass-button-gradient) !important;
+        backdrop-filter: blur(18px) saturate(170%) !important;
+        box-shadow: var(--liquid-glass-shadow) !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .jumpToPresentBar_j9Vvzj {
+        bottom: calc(var(--chatbar-height, 52px) + 18px) !important;
+        left: 18px !important;
+        right: 18px !important;
+    }
+}
+
+/* Optional floating top channel header (--floating-top-bar: on) */
+@container body style(--floating-top-bar: on) {
+    .chat_z_gUBg {
+        position: relative !important;
+    }
+
+    .chat_z_gUBg>.subtitleContainer_z_gUBg {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-bottom: 0 !important;
+        z-index: 101 !important;
+        background-color: color-mix(in srgb, var(--c-glass-base) 65%, transparent) !important;
+        backdrop-filter: blur(28px) saturate(180%) brightness(1.0) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(180%) brightness(1.0) !important;
+    }
+
+    .chat_z_gUBg>.content_z_gUBg>.container_86es0b,
+    .chat_z_gUBg>.content_z_gUBg>.membersWrap_86es0b,
+    .chat_z_gUBg>.content_z_gUBg>.searchResultsWrap_QHVbp3,
+    .chat_z_gUBg>.content_z_gUBg>aside {
+        margin-top: calc(var(--custom-channel-header-height, 48px) + var(--gap)) !important;
+    }
+
+    .scroller_8AE1Qq {
+        mask-image: none !important;
+        -webkit-mask-image: none !important;
+        padding-top: calc(var(--custom-channel-header-height, 48px) + var(--gap)) !important;
+        box-sizing: border-box !important;
+    }
+
+    .scroller_8AE1Qq::-webkit-scrollbar-track {
+        margin-top: calc(var(--custom-channel-header-height, 48px) + var(--gap) + 8px) !important;
+    }
+
+    .newMessagesBar_j9Vvzj {
+        top: calc(var(--custom-channel-header-height, 48px) + 12px) !important;
+        left: 18px !important;
+        right: 18px !important;
+    }
+}
+
+/* Frosted glass islands for chatbar buttons (--toolbar-glass-islands: on) */
+@container body style(--toolbar-glass-islands: on) {
+    .buttons_2x8-Qn {
+        background-color: hsla(0, 0%, 100%, 0.045) !important;
+        background-image: var(--glass-button-gradient) !important;
+        border-radius: 999px !important;
+        padding-inline: 6px !important;
+        height: 34px !important;
+        margin-block: auto !important;
+        margin-inline-end: 6px !important;
+        box-shadow:
+            inset 1px -1px 1px -0.5px var(--edge-medium),
+            inset -1px 1px 1px -0.5px var(--edge-medium),
+            inset 0 2px 1.5px -1px hsla(220, 45%, 2%, 0.45),
+            inset 0 4px 3.5px -2px var(--ring-inner),
+            inset 0 0 0 1px hsla(0, 0%, 100%, 0.09) !important;
+        align-items: center !important;
+    }
+
+    .attachWrapper_7TM4SO .attachButton_2x8-Qn,
+    .attachWrapper_7TM4SO .attachButton_7TM4SO {
+        background-color: hsla(0, 0%, 100%, 0.05) !important;
+        background-image: var(--glass-button-gradient) !important;
+        border-radius: 50% !important;
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+        margin-inline: 6px 4px !important;
+        margin-block: auto !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow:
+            inset 1px -1px 1px -0.5px var(--edge-medium),
+            inset -1px 1px 1px -0.5px var(--edge-medium),
+            inset 0 2px 1.5px -1px hsla(220, 45%, 2%, 0.45),
+            inset 0 4px 3.5px -2px var(--ring-inner),
+            inset 0 0 0 1px hsla(0, 0%, 100%, 0.10) !important;
+    }
+
+    .attachWrapper_7TM4SO .attachButton_2x8-Qn:hover,
+    .attachWrapper_7TM4SO .attachButton_7TM4SO:hover {
+        background-color: hsla(0, 0%, 100%, 0.12) !important;
+        border-radius: 50% !important;
+        box-shadow: var(--liquid-glass-shadow-hover) !important;
+        transform: translateY(-1px) scale(1.04);
+    }
+}
+
+.attachWrapper_7TM4SO,
+.attachWrapper_7TM4SO:hover,
+.attachButtonInner_2x8-Qn,
+.attachButtonInner_7TM4SO,
+[class*="attachButtonInner_"],
+.attachWrapper_7TM4SO .attachButton_2x8-Qn *,
+.attachWrapper_7TM4SO .attachButton_7TM4SO * {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* Top-right Inbox button styling */
+.trailing_3zSH5d>div:not(.winButtons_3zSH5d) {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.trailing_3zSH5d div.clickable_fErCLM {
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    transition:
+        transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.22s ease,
+        box-shadow 0.22s ease !important;
+}
+
+.trailing_3zSH5d div.clickable_fErCLM:hover {
+    background-color: var(--card-color-hover) !important;
+    background-image: var(--glass-button-gradient) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--liquid-glass-shadow) !important;
+}
+
+/* Active panel optical contour highlight on hover */
+.guilds_pog62O:hover,
+.sidebarList_pog62O:hover,
+.panels_pog62O:hover,
+.chat_z_gUBg>.subtitleContainer_z_gUBg:hover,
+.messagesWrapper_8AE1Qq:hover,
+.container_86es0b:hover,
+.peopleColumn_zrUwGA:hover,
+.nowPlayingColumn_zrUwGA:hover,
+.searchResultsWrap_QHVbp3:hover {
+    box-shadow:
+        inset 0 1.5px 1.2px 0 hsla(0, 0%, 100%, 0.56),
+        inset 2px -2px 1.5px -0.5px var(--edge-bright),
+        inset -2px 2px 1.5px -0.5px var(--edge-bright),
+        inset 0 3px 2px -1px hsla(220, 45%, 2%, 0.58),
+        inset 3px 0 2px -1px hsla(220, 45%, 2%, 0.44),
+        inset -3px 0 2px -1px hsla(220, 45%, 2%, 0.44),
+        inset 0 6.5px 6px -2.5px hsla(205, 80%, 94%, 0.26),
+        inset 6.5px 0 6px -2.5px var(--ca-cyan),
+        inset -6.5px 0 6px -2.5px var(--ca-magenta),
+        inset 0 -6.5px 7.5px -2.5px var(--ca-bottom-prism),
+        inset 0 0 0 1.2px hsla(0, 0%, 100%, 0.24),
+        var(--panel-shadow) !important;
+}
+
+.guilds_pog62O,
+.sidebarList_pog62O,
+.panels_pog62O {
+    background-color: var(--sidebar-color) !important;
+}
+
+.scroller_8AE1Qq {
+    mask-image: linear-gradient(to bottom,
+            transparent 0px,
+            black 16px,
+            black calc(100% - 16px),
+            transparent 100%) !important;
+    -webkit-mask-image: linear-gradient(to bottom,
+            transparent 0px,
+            black 16px,
+            black calc(100% - 16px),
+            transparent 100%) !important;
+}
+
+.header_XH4OpX,
+.searchBar_u88IQl {
+    height: 54px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: var(--popout-header-shadow) !important;
+}
+
+/* Soft glass gradient dividers in channel sidebar */
+.sectionDivider_XH4OpX {
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent 0%, hsla(0, 0%, 100%, 0.14) 50%, transparent 100%) !important;
+    border: none !important;
+}
+
+/* ==========================================================================
+   5. CHAT MESSAGES (COMPACT BUBBLES & WIDE MERGED GROUPS)
+   ========================================================================== */
+.wrapper_2i8Bfm.cozy_2i8Bfm,
+.wrapper_2i8Bfm.compact_2i8Bfm,
+.scrollerInner_8AE1Qq>.groupStart_SY_P2T:not(.message_SY_P2T) {
+    margin-inline-start: 68px !important;
+    margin-inline-end: 16px !important;
+    padding-inline: var(--message-padding-side) !important;
+    border-radius: var(--message-radius) !important;
+    background-color: var(--message-color) !important;
+    background-image: linear-gradient(135deg,
+            hsla(0, 0%, 100%, 0.035) 0%,
+            transparent 60%,
+            hsla(0, 0%, 100%, 0.012) 100%) !important;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.groupStart_SY_P2T:has([class*="blockedSystemMessage"]),
+[class*="blockedSystemMessage"] {
+    border-radius: var(--message-radius) !important;
+    border: none !important;
+}
+
+.mouse-mode.full-motion .wrapper_2i8Bfm:hover {
+    background-color: var(--message-color-hover) !important;
+}
+
+/* Wide merged message groups (--compact-messages: off) */
+@container body style(--compact-messages: off) {
+    .messageListItem_SY_P2T:has(.groupStart_SY_P2T):not(:has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T))) .wrapper_2i8Bfm {
+        margin-block-start: 6px !important;
+        margin-block-end: 2px !important;
+        padding-block: var(--message-padding-top) !important;
+        border-radius: var(--message-radius) !important;
+        border: 1px solid hsla(0, 0%, 100%, 0.085) !important;
+        border-top-color: hsla(0, 0%, 100%, 0.17) !important;
+        box-shadow: 0 4px 12px -2px hsla(0, 0%, 0%, 0.22) !important;
+    }
+
+    .messageListItem_SY_P2T:has(.groupStart_SY_P2T):has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T)) .wrapper_2i8Bfm {
+        margin-block-start: 6px !important;
+        margin-block-end: 0px !important;
+        padding-block-start: var(--message-padding-top) !important;
+        padding-block-end: 3px !important;
+        border-radius: var(--message-radius) var(--message-radius) 0 0 !important;
+        border-top: 1px solid hsla(0, 0%, 100%, 0.17) !important;
+        border-inline: 1px solid hsla(0, 0%, 100%, 0.085) !important;
+        border-bottom: none !important;
+        box-shadow: none !important;
+    }
+
+    .messageListItem_SY_P2T:has(.wrapper_2i8Bfm:not(.groupStart_SY_P2T)):has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T)) .wrapper_2i8Bfm {
+        margin-block-start: 0px !important;
+        margin-block-end: 0px !important;
+        padding-block: 2px 3px !important;
+        border-radius: 0 !important;
+        border-block: none !important;
+        border-inline: 1px solid hsla(0, 0%, 100%, 0.085) !important;
+        box-shadow: none !important;
+    }
+
+    .messageListItem_SY_P2T:has(.wrapper_2i8Bfm:not(.groupStart_SY_P2T)):not(:has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T))) .wrapper_2i8Bfm {
+        margin-block-start: 0px !important;
+        margin-block-end: 2px !important;
+        padding-block-start: 2px !important;
+        padding-block-end: var(--message-padding-top) !important;
+        border-radius: 0 0 var(--message-radius) var(--message-radius) !important;
+        border-top: none !important;
+        border-inline: 1px solid hsla(0, 0%, 100%, 0.085) !important;
+        border-bottom: 1px solid hsla(0, 0%, 100%, 0.085) !important;
+        box-shadow: 0 6px 12px -4px hsla(0, 0%, 0%, 0.22) !important;
+    }
+}
+
+/* Compact fit-content message bubbles (--compact-messages: on) */
+@container body style(--compact-messages: on) {
+
+    .wrapper_2i8Bfm.cozy_2i8Bfm,
+    .wrapper_2i8Bfm.compact_2i8Bfm {
+        width: fit-content !important;
+        min-width: 110px;
+        max-width: var(--compact-message-max-width) !important;
+        padding-block: var(--message-padding-top) !important;
+        border: none !important;
+        box-shadow:
+            inset 1.5px -1.5px 1px -1px var(--edge-medium),
+            inset -1.5px 1.5px 1px -1px var(--edge-medium),
+            inset 0 0 0 1px hsla(0, 0%, 100%, 0.085),
+            0 4px 12px -2px hsla(0, 0%, 0%, 0.22) !important;
+    }
+
+    /* Keep message action popover from clipping off-screen on short messages */
+    .wrapper_2i8Bfm .buttonContainer_2i8Bfm .buttons_2i8Bfm,
+    .wrapper_2i8Bfm [class*="buttonContainer_"] [class*="buttons_"] {
+        left: max(0px, calc(100% - 250px)) !important;
+        right: auto !important;
+        z-index: 20 !important;
+    }
+
+    .messageListItem_SY_P2T:has(.groupStart_SY_P2T):not(:has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T))) .wrapper_2i8Bfm {
+        margin-block-start: 6px !important;
+        margin-block-end: 2px !important;
+        border-radius: var(--message-radius) !important;
+    }
+
+    .messageListItem_SY_P2T:has(.groupStart_SY_P2T):has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T)) .wrapper_2i8Bfm {
+        margin-block-start: 6px !important;
+        margin-block-end: 2px !important;
+        border-radius: var(--message-radius) var(--message-radius) var(--message-radius) var(--message-group-sm-radius) !important;
+    }
+
+    .messageListItem_SY_P2T:has(.wrapper_2i8Bfm:not(.groupStart_SY_P2T)):has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T)) .wrapper_2i8Bfm {
+        margin-block: 2px !important;
+        padding-block: 7px !important;
+        border-radius: var(--message-group-sm-radius) var(--message-radius) var(--message-radius) var(--message-group-sm-radius) !important;
+    }
+
+    .messageListItem_SY_P2T:has(.wrapper_2i8Bfm:not(.groupStart_SY_P2T)):not(:has(+ .messageListItem_SY_P2T .wrapper_2i8Bfm:not(.groupStart_SY_P2T))) .wrapper_2i8Bfm {
+        margin-block-start: 2px !important;
+        margin-block-end: 2px !important;
+        padding-block: 7px 9px !important;
+        border-radius: var(--message-group-sm-radius) var(--message-radius) var(--message-radius) var(--message-radius) !important;
+    }
+
+    .wrapper_2i8Bfm:has(.channelTextArea_2x8-Qn) {
+        width: calc(100% - 84px) !important;
+    }
+}
+
+/* Avatars, reply spine, and username readability */
+.avatar_2i8Bfm {
+    width: 40px;
+    height: 40px;
+    inset-block-start: 2px !important;
+    inset-inline-start: -52px !important;
+    margin-block-start: 0 !important;
+    box-shadow:
+        0 0 0 1.5px hsla(0, 0%, 100%, 0.18),
+        0 4px 12px hsla(0, 0%, 0%, 0.35);
+}
+
+.avatarDecoration_2i8Bfm {
+    inset-block-start: 0px !important;
+    inset-inline-start: -56px !important;
+}
+
+.wrapper_2i8Bfm:is(.hasReply_2i8Bfm,
+    :has(.repliedMessage_2i8Bfm),
+    :has(.repliedMessageClickableSpine_2i8Bfm),
+    :has(.executedCommand_2i8Bfm),
+    :has([class*="repliedMessage"]),
+    :has([class*="executedCommand"]),
+    :has([class*="threadMessageAccessory"])) .avatar_2i8Bfm {
+    inset-block-start: 28px !important;
+}
+
+.wrapper_2i8Bfm:is(.hasReply_2i8Bfm,
+    :has(.repliedMessage_2i8Bfm),
+    :has(.repliedMessageClickableSpine_2i8Bfm),
+    :has(.executedCommand_2i8Bfm),
+    :has([class*="repliedMessage"]),
+    :has([class*="executedCommand"]),
+    :has([class*="threadMessageAccessory"])) .avatarDecoration_2i8Bfm {
+    inset-block-start: 26px !important;
+}
+
+.repliedMessage_2i8Bfm::before,
+.repliedMessageClickableSpine_2i8Bfm,
+.executedCommand_2i8Bfm::before {
+    inset-inline-start: -32px !important;
+    inset-block-start: 50% !important;
+    inset-block-end: auto !important;
+    height: 14px !important;
+    width: 26px !important;
+    margin: 0 !important;
+    transform: none !important;
+    border-left: 2px solid hsla(220, 25%, 85%, 0.45) !important;
+    border-top: 2px solid hsla(220, 25%, 85%, 0.45) !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-top-left-radius: 8px !important;
+}
+
+.repliedMessageClickableSpine_2i8Bfm:hover,
+.repliedMessageClickableSpine_2i8Bfm.repliedMessageContentHovered_2i8Bfm {
+    border-color: hsla(0, 0%, 100%, 0.80) !important;
+}
+
+.repliedMessage_2i8Bfm .username_2i8Bfm,
+.header_2i8Bfm .username_2i8Bfm {
+    filter: brightness(1.32) saturate(1.08);
+    text-shadow: 0 1px 3px hsla(0, 0%, 0%, 0.75) !important;
+}
+
+.wrapper_2i8Bfm.cozy_2i8Bfm .timestamp_2i8Bfm.alt_2i8Bfm {
+    inset-inline-start: -62px !important;
+}
+
+#app-mount .message_SY_P2T.mentioned_SY_P2T::before,
+#app-mount .message_SY_P2T.replying_SY_P2T::before,
+#app-mount .message_SY_P2T.ephemeral_SY_P2T::before,
+.wrapper_2i8Bfm.mentioned_SY_P2T::before,
+.wrapper_2i8Bfm.replying_SY_P2T::before {
+    display: none !important;
+}
+
+#app-mount .wrapper_2i8Bfm.mentioned_SY_P2T,
+#app-mount .wrapper_2i8Bfm.replying_SY_P2T {
+    background-color: var(--message-color) !important;
+    background-image: linear-gradient(135deg,
+            hsla(0, 0%, 100%, 0.035) 0%,
+            transparent 60%,
+            hsla(0, 0%, 100%, 0.012) 100%) !important;
+}
+
+/* Frosted glass capsule around quoted reply preview */
+.repliedMessage_2i8Bfm {
+    background: linear-gradient(90deg, hsla(0, 0%, 100%, 0.065), hsla(0, 0%, 100%, 0.02)) !important;
+    border-radius: 999px !important;
+    padding: 2px 10px 2px 6px !important;
+    margin-bottom: 4px !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    box-shadow:
+        inset 0 1px 0.5px hsla(0, 0%, 100%, 0.18),
+        inset 0 0 0 1px hsla(0, 0%, 100%, 0.07) !important;
+}
+
+/* Dynamic visionOS-style hover response (--dynamic-glass-hover: on) */
+@container body style(--dynamic-glass-hover: on) {
+
+    .wrapper_2i8Bfm.cozy_2i8Bfm,
+    .wrapper_2i8Bfm.compact_2i8Bfm {
+        transition:
+            transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+            background-color 0.22s ease,
+            box-shadow 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+
+    @container body style(--compact-messages: on) {
+        .mouse-mode.full-motion .wrapper_2i8Bfm:hover {
+            transform: translateY(-1.5px) scale(1.008);
+            box-shadow:
+                inset 1.5px -1.5px 1.5px -0.5px var(--edge-bright),
+                inset -1.5px 1.5px 1.5px -0.5px var(--edge-bright),
+                inset 0 2px 2px -1px hsla(0, 0%, 0%, 0.45),
+                inset 0 5px 4px -2px hsla(200, 80%, 92%, 0.18),
+                inset 0 0 0 1px hsla(0, 0%, 100%, 0.16),
+                0 8px 20px -4px hsla(0, 0%, 0%, 0.36) !important;
+        }
+    }
+
+    .embedFull_XyW1ZT,
+    .imageWrapper_W6wEGA,
+    .fileWrapper_-9z-XO,
+    .wrapperAudio_FJ99sr {
+        transition:
+            transform 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.26s cubic-bezier(0.22, 1, 0.36, 1),
+            filter 0.26s ease !important;
+    }
+
+    .embedFull_XyW1ZT:hover,
+    .imageWrapper_W6wEGA:hover,
+    .fileWrapper_-9z-XO:hover,
+    .wrapperAudio_FJ99sr:hover {
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: var(--liquid-glass-shadow-hover), 0 10px 26px -4px hsla(0, 0%, 0%, 0.42) !important;
+    }
+
+    .wrapper_TNyK-N:hover .link_TNyK-N,
+    .channel_zln_tS:hover,
+    .container_J1Adu_:hover .layout_J1Adu_ {
+        transform: translateX(3px) scale(1.012);
+    }
+
+    .listItem_5dqHTG:hover .wrapper_JJ-hgR {
+        transform: translateY(-1.5px) scale(1.05);
+        transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) !important;
+    }
+}
+
+/* ==========================================================================
+   6. SERVER LIST, HOME BUTTON PARALLAX SVG & NOTIFICATION BADGES
+   ========================================================================== */
+.circleIconButton_g8YUxD,
+.wrapper_JJ-hgR[data-list-item-id='guildsnav___home']>.childWrapper_JJ-hgR,
+.childWrapperNoHoverBg_JJ-hgR {
+    border-radius: 50% !important;
+    background-color: var(--card-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    box-shadow:
+        inset 1.5px -1.5px 1.5px -0.5px var(--edge-bright),
+        inset -1.5px 1.5px 1.5px -0.5px var(--edge-bright),
+        inset 0 2px 2px -1px hsla(0, 0%, 0%, 0.48),
+        inset 0 5px 4px -2px hsla(200, 80%, 92%, 0.20),
+        inset 0 0 0 1px hsla(0, 0%, 100%, 0.16) !important;
+    color: var(--text-1) !important;
+    transition:
+        border-radius 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 0.25s ease,
+        box-shadow 0.25s ease,
+        transform 0.25s ease !important;
+}
+
+.circleIconButton_g8YUxD:hover,
+.circleIconButton_g8YUxD.selected_g8YUxD,
+.wrapper_JJ-hgR[data-list-item-id='guildsnav___home']:hover>.childWrapper_JJ-hgR,
+.wrapper_JJ-hgR[data-list-item-id='guildsnav___home'].selected_JJ-hgR>.childWrapper_JJ-hgR {
+    border-radius: 32% !important;
+    background-color: hsla(var(--accent-hsl), 0.72) !important;
+    box-shadow:
+        inset 2px -2px 2px -0.5px hsla(0, 0%, 100%, 0.85),
+        inset -2px 2px 2px -0.5px hsla(0, 0%, 100%, 0.75),
+        inset 0 3px 3px -1px hsla(0, 0%, 0%, 0.45),
+        inset 0 6px 5px -2px hsla(0, 0%, 100%, 0.35),
+        inset 0 0 0 1px hsla(0, 0%, 100%, 0.30) !important;
+    color: var(--accent-text-color) !important;
+}
+
+/* Two-layer counter-rotating SVG animation for the Home / DM button */
+@keyframes liquidPrismIdle {
+    0%, 100% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(6deg) scale(0.95);
+    }
+}
+
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home']>.childWrapper_JJ-hgR {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home']>.childWrapper_JJ-hgR::before {
+    animation: liquidPrismIdle 6s ease-in-out infinite !important;
+    transition:
+        background-color 0.35s ease,
+        transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+        filter 0.35s ease !important;
+    filter: drop-shadow(0 0 6px hsla(205, 100%, 85%, 0.35)) !important;
+}
+
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home']>.childWrapper_JJ-hgR::after {
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    width: 68% !important;
+    height: 68% !important;
+    background: var(--dms-icon-color-before) !important;
+    mask-image: var(--dms-sparkles-svg-url, none) !important;
+    mask-size: contain !important;
+    mask-position: center !important;
+    mask-repeat: no-repeat !important;
+    -webkit-mask-image: var(--dms-sparkles-svg-url, none) !important;
+    -webkit-mask-size: contain !important;
+    -webkit-mask-position: center !important;
+    -webkit-mask-repeat: no-repeat !important;
+    opacity: 0.78 !important;
+    transform: rotate(0deg) scale(0.88) !important;
+    transition:
+        background-color 0.35s ease,
+        opacity 0.35s ease,
+        transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+    pointer-events: none !important;
+}
+
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home']:hover>.childWrapper_JJ-hgR::before,
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home'].selected_JJ-hgR>.childWrapper_JJ-hgR::before {
+    animation: none !important;
+    transform: rotate(90deg) scale(1.08) !important;
+    background: var(--dms-icon-color-after) !important;
+    filter: drop-shadow(0 0 8px hsla(0, 0%, 100%, 0.65)) !important;
+}
+
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home']:hover>.childWrapper_JJ-hgR::after,
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home'].selected_JJ-hgR>.childWrapper_JJ-hgR::after {
+    transform: rotate(-90deg) scale(1.16) !important;
+    background: var(--dms-icon-color-after) !important;
+    opacity: 1 !important;
+}
+
+body .wrapper_JJ-hgR[data-list-item-id='guildsnav___home']:active>.childWrapper_JJ-hgR::before {
+    transform: rotate(135deg) scale(0.92) !important;
+    transition-duration: 0.15s !important;
+}
+
+.folderGroupBackground_RTMSuZ,
+.folderPreviewWrapper_RTMSuZ {
+    border-radius: 24px !important;
+    box-shadow:
+        inset 1.5px -1.5px 1.5px -0.5px var(--edge-bright),
+        inset -1.5px 1.5px 1.5px -0.5px var(--edge-bright),
+        inset 0 0 0 1px hsla(0, 0%, 100%, 0.14) !important;
+}
+
+/* Glossy iOS-style notification badges */
+#app-mount .numberBadge_lMvXrQ,
+#app-mount .mentionsBar_t1P8Sn,
+#app-mount .mention_oJAkDB {
+    background: linear-gradient(135deg, hsl(352, 92%, 62%), hsl(345, 85%, 50%)) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    box-shadow:
+        inset 0 1px 1px hsla(0, 0%, 100%, 0.65),
+        0 2px 8px hsla(350, 90%, 50%, 0.45) !important;
+    border: none !important;
+}
+
+/* Glowing active server pill indicator */
+.item__o8_Xq {
+    background: linear-gradient(180deg, #ffffff, hsl(210, 80%, 88%)) !important;
+    box-shadow: 0 0 8px hsla(0, 0%, 100%, 0.55) !important;
+}
+
+/* ==========================================================================
+   7. DATE DIVIDERS, MESSAGE POPOVER, REACTIONS & EMBEDS
+   ========================================================================== */
+.divider_4TfzT5.hasContent_SY_P2T {
+    border: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-block: 14px 10px !important;
+}
+
+.divider_4TfzT5.hasContent_SY_P2T::before,
+.divider_4TfzT5.hasContent_SY_P2T::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    border: none !important;
+}
+
+.divider_4TfzT5.hasContent_SY_P2T::before {
+    background: linear-gradient(90deg, transparent 0%, hsla(0, 0%, 100%, 0.28) 85%, transparent 100%) !important;
+    margin-right: 12px;
+}
+
+.divider_4TfzT5.hasContent_SY_P2T::after {
+    background: linear-gradient(270deg, transparent 0%, hsla(0, 0%, 100%, 0.28) 85%, transparent 100%) !important;
+    margin-left: 12px;
+}
+
+.content_4TfzT5 {
+    margin: 0 !important;
+    padding: 5px 16px !important;
+    background-color: var(--popout-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: 999px !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    backdrop-filter: blur(14px) saturate(170%) !important;
+    color: var(--text-1) !important;
+    font-weight: 600 !important;
+}
+
+/* Message hover action bar (reactions, reply, forward) */
+.popover_DpHsW6.popover_DpHsW6,
+.popover_DpHsW6.popover_DpHsW6:hover,
+.wrapper_Qi4I4L,
+.wrapper_Qi4I4L:hover {
+    background-color: var(--popout-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: 999px !important;
+    border: none !important;
+    box-shadow:
+        var(--liquid-glass-shadow-hover),
+        inset 0 2px 2px -1px hsla(0, 0%, 0%, 0.45),
+        inset 0 5px 4px -2px hsla(200, 80%, 92%, 0.24),
+        0 8px 24px -4px hsla(0, 0%, 0%, 0.50) !important;
+    backdrop-filter: blur(var(--popout-blur)) saturate(180%) brightness(1.05) !important;
+    -webkit-backdrop-filter: blur(var(--popout-blur)) saturate(180%) brightness(1.05) !important;
+    padding: 3px 6px !important;
+}
+
+.popover_DpHsW6 .button_Qi4I4L {
+    border-radius: 999px !important;
+}
+
+.reaction_MmKct8,
+.reactionBtn_MmKct8 {
+    background-color: var(--card-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: 999px !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.reaction_MmKct8:hover {
+    background-color: var(--card-color-hover) !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    transform: translateY(-2px);
+}
+
+.reaction_MmKct8.reactionMe_MmKct8 {
+    background-color: hsla(var(--accent-hsl), 0.28) !important;
+    box-shadow:
+        var(--liquid-glass-shadow-hover),
+        inset 0 0 0 1px hsla(var(--accent-hsl), 0.50) !important;
+}
+
+.embedFull_XyW1ZT,
+.fileWrapper_-9z-XO,
+.embedCard_CKGXbh,
+.container_g2fiji,
+.wrapper_jsxF_b,
+.invite__4d3fa,
+.wrapperAudio_FJ99sr,
+.pollContainer_YUQhib,
+.answerInner_D4-WfD,
+.upload_JyxBSo,
+.markup_ku1OHH pre,
+.textContainer_BOOBu-,
+.footer_BOOBu- {
+    background-color: hsla(220, 25%, 10%, 0.42) !important;
+    background-image: var(--glass-surface-gradient) !important;
+    border-radius: var(--card-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    backdrop-filter: blur(16px) saturate(160%) !important;
+}
+
+.embedFull_XyW1ZT {
+    border-inline-start: 4px solid hsl(var(--accent-hsl)) !important;
+}
+
+.markup_ku1OHH code {
+    background-color: var(--textarea-block-color) !important;
+    border-radius: 10px !important;
+    border: none !important;
+    box-shadow: inset 1px -1px 1px hsla(0, 0%, 100%, 0.20) !important;
+}
+
+.imageWrapper_W6wEGA,
+.embedVideo_XyW1ZT {
+    border-radius: calc(var(--card-radius) - 4px) !important;
+}
+
+/* ==========================================================================
+   8. CHAT INPUT CAPSULE & SEARCH INPUTS
+   ========================================================================== */
+#app-mount .channelTextArea_z_gUBg,
+.channelTextArea_2x8-Qn,
+.wrapper_ST_Y69 {
+    background-color: rgba(var(--textarea-color), var(--textarea-alpha)) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: var(--textarea-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow), 0 10px 28px -4px hsla(0, 0%, 0%, 0.35) !important;
+    backdrop-filter: blur(var(--popout-blur)) saturate(180%) brightness(1.08) !important;
+    -webkit-backdrop-filter: blur(var(--popout-blur)) saturate(180%) brightness(1.08) !important;
+    transition:
+        background-color var(--transition-time) var(--transition-type),
+        box-shadow var(--transition-time) var(--transition-type),
+        transform var(--transition-time) var(--transition-type) !important;
+}
+
+#app-mount .channelTextArea_z_gUBg:hover,
+.channelTextArea_2x8-Qn:hover {
+    background-color: rgba(var(--textarea-color), calc(var(--textarea-alpha) + 0.03)) !important;
+    box-shadow: var(--liquid-glass-shadow-hover), 0 12px 32px -4px hsla(0, 0%, 0%, 0.42) !important;
+}
+
+#app-mount .channelTextArea_z_gUBg:focus-within,
+.channelTextArea_2x8-Qn:focus-within {
+    background-color: rgba(var(--textarea-color), var(--textarea-alpha-focus)) !important;
+    box-shadow:
+        var(--liquid-glass-shadow-hover),
+        0 14px 36px -4px hsla(0, 0%, 0%, 0.48) !important;
+}
+
+.channelTextArea_2x8-Qn .scrollableContainer_2x8-Qn,
+.form_z_gUBg .themedBackground_2x8-Qn,
+.stackedBars_2x8-Qn,
+.stackedBars_2x8-Qn .replyBar_rE8-46,
+.threadSuggestionBar_rE8-46 {
+    background: transparent !important;
+}
+
+.channelTextArea_2x8-Qn .inner_2x8-Qn {
+    align-items: center !important;
+    min-height: var(--chatbar-height) !important;
+}
+
+.channelTextArea_2x8-Qn .textArea_2x8-Qn {
+    min-height: var(--chatbar-height) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.channelTextArea_2x8-Qn .placeholder_SHcSVi,
+.channelTextArea_2x8-Qn .slateTextArea_q99V_- {
+    padding-block: 11px !important;
+    line-height: 22px !important;
+}
+
+/* ==========================================================================
+   8.5. VOICE CONNECTION & ACTIVITY PANEL
+   ========================================================================== */
+.panel_8eCwJY,
+.activityPanel_pog62O,
+.container_9U6LUN,
+.connection_9U6LUN {
+    background: transparent !important;
+    border-bottom: 1px solid hsla(0, 0%, 100%, 0.08) !important;
+}
+
+.actionButtons_9U6LUN .button_F7qvhY,
+.actionButtons_9U6LUN .button_hfM7yP,
+.actionButtons_9U6LUN button {
+    background-color: hsla(0, 0%, 100%, 0.065) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: var(--button-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    color: var(--text-2) !important;
+}
+
+.actionButtons_9U6LUN .button_F7qvhY:hover,
+.actionButtons_9U6LUN .button_hfM7yP:hover,
+.actionButtons_9U6LUN button:hover {
+    background-color: hsla(0, 0%, 100%, 0.13) !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    color: var(--text-1) !important;
+    transform: translateY(-1.5px);
+}
+
+/* Glowing ring around speaking user in voice channels */
+.avatarSpeaking_I11pgV,
+.userAvatar_xIeVT2[style*="status-speaking"] {
+    box-shadow:
+        0 0 0 2px var(--online),
+        0 0 10px var(--online) !important;
+}
+
+.searchBar_i16Ad0,
+.searchBar_u88IQl .button_F7qvhY,
+.wrapper_UcGqzv,
+.searchBar_rfDq2B,
+.bd-search-wrapper,
+.quickswitcher_a1DYes .input_a1DYes,
+.stepperContainer_QSBA8Q,
+.keybindInput_0PgvPQ,
+.bioTextArea_agtm70 {
+    background-color: rgba(var(--textarea-color), var(--textarea-alpha)) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: var(--input-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    color: var(--textarea-text-color) !important;
+    transition:
+        background-color var(--transition-time) var(--transition-type),
+        box-shadow var(--transition-time) var(--transition-type) !important;
+}
+
+.searchBar_i16Ad0:hover,
+.wrapper_UcGqzv:hover {
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+}
+
+.searchBar_i16Ad0:focus-within,
+.wrapper_UcGqzv:has(input:focus, textarea:focus),
+.searchBar_rfDq2B:has(input:focus, textarea:focus),
+.bd-search-wrapper:has(input:focus, textarea:focus),
+.quickswitcher_a1DYes .input_a1DYes:focus {
+    background-color: rgba(var(--textarea-color), var(--textarea-alpha-focus)) !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    outline: none !important;
+}
+
+/* ==========================================================================
+   9. CHANNEL LIST, SERVER BOOST BAR, DMS & MEMBER LIST
+   ========================================================================== */
+.wrapper_TNyK-N .link_TNyK-N,
+.channel_zln_tS,
+.layout_J1Adu_,
+.side_6zZYhF .item_6zZYhF {
+    border-radius: var(--list-item-radius) !important;
+    transition:
+        margin-left var(--list-item-transition),
+        background-color var(--transition-time) var(--transition-type),
+        box-shadow var(--transition-time) var(--transition-type) !important;
+}
+
+.wrapper_TNyK-N:hover .link_TNyK-N,
+.modeSelected_TNyK-N .link_TNyK-N,
+.channel_zln_tS:hover,
+.interactiveSelected_zln_tS,
+.container_J1Adu_:hover .layout_J1Adu_,
+.side_6zZYhF .item_6zZYhF:hover,
+.side_6zZYhF .item_6zZYhF.selected_6zZYhF {
+    background-color: var(--card-color-hover) !important;
+    background-image: var(--glass-button-gradient) !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+}
+
+.modeSelected_TNyK-N .link_TNyK-N,
+.interactiveSelected_zln_tS,
+.side_6zZYhF .item_6zZYhF.selected_6zZYhF {
+    background-color: var(--card-color-select) !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+}
+
+.container_jOZ0iO,
+.progressContainer_BFMMcK {
+    background-color: var(--card-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: var(--list-item-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+}
+
+/* ==========================================================================
+   10. LIQUID GLASS BUTTONS
+   ========================================================================== */
+.button_hfM7yP:not(.noHover_hfM7yP),
+.button_F7qvhY,
+.bd-button {
+    border-radius: var(--button-radius) !important;
+}
+
+.lookFilled_hfM7yP,
+.lookOutlined_hfM7yP,
+.lookInverted_a299dc,
+.button_F7qvhY,
+.bd-button,
+.channelAppLauncher_s8hOwn .button_s8hOwn {
+    background-color: hsla(var(--accent-hsl), var(--accent-opacity)) !important;
+    background-image: var(--glass-button-gradient) !important;
+    color: var(--accent-text-color) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    backdrop-filter: blur(12px) saturate(170%) !important;
+    transition:
+        transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.25s ease,
+        background-color 0.25s ease,
+        filter 0.25s ease !important;
+}
+
+.lookFilled_hfM7yP:hover,
+.lookOutlined_hfM7yP:hover,
+.button_F7qvhY:hover,
+.bd-button:hover,
+.channelAppLauncher_s8hOwn .button_s8hOwn:hover {
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    filter: brightness(1.08);
+    transform: translateY(-2px);
+}
+
+.lookFilled_hfM7yP:active,
+.lookOutlined_hfM7yP:active,
+.button_F7qvhY:active,
+.bd-button:active,
+.channelAppLauncher_s8hOwn .button_s8hOwn:active {
+    transform: scale(0.95);
+}
+
+.secondary_F7qvhY,
+.lookOutlined_hfM7yP,
+.channelAppLauncher_s8hOwn .button_s8hOwn {
+    background-color: var(--card-color-hover) !important;
+    color: var(--text-1) !important;
+}
+
+.colorRed_hfM7yP,
+.critical-primary_F7qvhY {
+    background-color: hsla(var(--alert-hsl), var(--alert-opacity)) !important;
+    color: var(--alert-text-color) !important;
+}
+
+.icon-only_F7qvhY:not(.trailing_3zSH5d *) {
+    background-color: var(--liquid-glass-color-subtle) !important;
+    color: var(--text-1) !important;
+}
+
+/* Prevent duplicate default circle on top-right Inbox button */
+#app-mount .trailing_3zSH5d>div:not(.winButtons_3zSH5d),
+#app-mount .trailing_3zSH5d>div:not(.winButtons_3zSH5d):hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    transform: none !important;
+}
+
+#app-mount .trailing_3zSH5d :is(.button_F7qvhY, .icon-only_F7qvhY, div.clickable_fErCLM, .iconWrapper_ybUK7Z) {
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    color: var(--text-3) !important;
+}
+
+#app-mount .trailing_3zSH5d :is(.button_F7qvhY, .icon-only_F7qvhY, div.clickable_fErCLM, .iconWrapper_ybUK7Z):hover {
+    background-color: var(--card-color-hover) !important;
+    background-image: var(--glass-button-gradient) !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    color: var(--text-1) !important;
+    transform: translateY(-1px);
+}
+
+.container_g6VwXp .button_Y-8oZW,
+.clickable_ybUK7Z,
+.button_hfM7yP.noHover_hfM7yP {
+    border-radius: 999px !important;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+.container_g6VwXp .button_Y-8oZW:hover,
+.clickable_ybUK7Z:hover {
+    background-color: var(--card-color-hover) !important;
+    background-image: var(--glass-button-gradient) !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    transform: translateY(-1px);
+}
+
+.newMessagesBar_j9Vvzj,
+.jumpToPresentBar_j9Vvzj,
+.barBase_j9Vvzj:not(.bottomBar_j9Vvzj) {
+    background-color: var(--popout-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: 999px !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    backdrop-filter: blur(var(--popout-blur)) saturate(180%) brightness(1.1) !important;
+}
+
+/* ==========================================================================
+   11. POPOUTS, MODALS, CONTEXT MENUS, EMOJI/GIF PICKER & USER PROFILES
+   ========================================================================== */
+.menu_M3qk4j,
+.root__KoJTP,
+.container_dvN-MP,
+.contentWrapper_58b0l2,
+.wrapper_-sZhZn:not(.emojiPickerHasTabWrapper_-sZhZn),
+.messagesPopoutWrap_6bgemo,
+.container_uTMZTY,
+.container__9497c,
+.container_cbVzxY,
+.container_d5ae15,
+.popout_uFkqU2,
+.popout_R0WNX5,
+.popout_j5xNzb,
+.container_c0tu5x,
+.popoutContainer_j9Vvzj,
+.toolbar_hPmUPu,
+.tooltip_3_v8qp,
+.bd-modal-root,
+.bd-notification,
+.bd-notice,
+.user-profile-popout:not(.custom-user-profile-theme),
+.outer_P1YEjQ.user-profile-popout:not(.custom-theme-background) {
+    background-color: var(--popout-color) !important;
+    background-image: var(--glass-surface-gradient) !important;
+    border-radius: var(--popout-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow-hover), var(--popout-shadow) !important;
+    backdrop-filter: blur(var(--popout-blur)) saturate(var(--liquid-glass-saturation)) brightness(1.08) !important;
+    -webkit-backdrop-filter: blur(var(--popout-blur)) saturate(var(--liquid-glass-saturation)) brightness(1.08) !important;
+}
+
+.menu_M3qk4j::before {
+    border-radius: var(--popout-radius) !important;
+    background-color: var(--popout-color) !important;
+    background-image: var(--glass-surface-gradient) !important;
+    box-shadow: var(--liquid-glass-shadow-hover), var(--popout-shadow) !important;
+    backdrop-filter: blur(var(--popout-blur)) saturate(var(--liquid-glass-saturation)) brightness(1.08) !important;
+}
+
+.menu_M3qk4j .item_M3qk4j {
+    border-radius: var(--list-item-radius) !important;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.menu_M3qk4j .item_M3qk4j.focused_M3qk4j,
+.menu_M3qk4j .item_M3qk4j:hover {
+    background-color: var(--card-color-hover) !important;
+    background-image: var(--glass-button-gradient) !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+}
+
+.tooltip_3_v8qp {
+    border-radius: 999px !important;
+    padding: 6px 14px !important;
+}
+
+.tooltipPointer_3_v8qp {
+    display: none !important;
+}
+
+.backdrop__78332,
+.scrim_od1dl1 {
+    background-color: hsla(220, 30%, 4%, 0.35) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+.root__KoJTP .header__KoJTP,
+.root__KoJTP .footer__KoJTP,
+.root__KoJTP .modalFooter_ababa2,
+.header_6bgemo,
+.header_-sZhZn,
+.header_WSRqCO,
+.header_rfDq2B {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* ==========================================================================
+   12. FORUM CARDS, FRIENDS LIST & SETTINGS CARDS
+   ========================================================================== */
+.container_x1LvFB,
+.container_SOY5H6,
+.mainCard_BkGrJJ,
+.header_BkGrJJ,
+.card_qCN-Ri,
+.cardPrimary_qCN-Ri,
+.accountProfileCard_a9178b,
+.accountProfileCard_a9178b .background_a9178b,
+.credentialList__6c75d,
+.paymentPane_VuWkDZ,
+.connection_yX-kzH,
+.authedAppV2_-8GDCL,
+.settingCard_1X7XDm,
+.editCard_xX0l5K,
+.collapseable_EWrVB9,
+.auditLog_LajYMK,
+.productCardContainer_UGbKo5,
+.itemCard_GNEh_C,
+.outer_GNEh_C,
+.peopleListItem_zrUwGA:hover,
+.peopleListItem_zrUwGA.active_zrUwGA,
+.vc-addon-card,
+.bd-addon-card {
+    background-color: var(--card-color) !important;
+    background-image: var(--glass-surface-gradient) !important;
+    border-radius: var(--card-radius) !important;
+    border: none !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+    backdrop-filter: blur(14px) saturate(160%) !important;
+    transition:
+        background-color var(--transition-time) var(--transition-type),
+        box-shadow var(--transition-time) var(--transition-type),
+        transform var(--transition-time) var(--transition-type) !important;
+}
+
+.container_x1LvFB:hover,
+.container_SOY5H6:hover,
+.mainCard_BkGrJJ:hover,
+.itemCard_GNEh_C:hover,
+.productCardContainer_UGbKo5:hover,
+.vc-addon-card:hover,
+.bd-addon-card:hover {
+    background-color: var(--card-color-hover) !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    transform: translateY(-2px);
+}
+
+.actionButton-2ae9DJ,
+.actionButton_zrUwGA {
+    background-color: var(--card-color) !important;
+    background-image: var(--glass-button-gradient) !important;
+    border-radius: 50% !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+}
+
+.actionButton-2ae9DJ:hover,
+.actionButton_zrUwGA:hover {
+    background-color: var(--card-color-hover) !important;
+    box-shadow: var(--liquid-glass-shadow-hover) !important;
+    transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   13. DISCORD SETTINGS VIEW
+   ========================================================================== */
+.standardSidebarView_jnk11m {
+    margin: var(--gap) !important;
+    background-color: var(--bg-4) !important;
+    background-image: var(--glass-surface-gradient) !important;
+    border-radius: var(--app-radius) !important;
+    border: none !important;
+    box-shadow: var(--popout-shadow-border), var(--popout-shadow) !important;
+    backdrop-filter: blur(var(--popout-blur)) saturate(var(--liquid-glass-saturation)) brightness(1.06) !important;
+    -webkit-backdrop-filter: blur(var(--popout-blur)) saturate(var(--liquid-glass-saturation)) brightness(1.06) !important;
+    overflow: hidden;
+}
+
+.sidebarRegion_jnk11m,
+.sidebarRegionScroller_jnk11m {
+    background-color: hsla(220, 25%, 6%, 0.24) !important;
+}
+
+.contentRegion_jnk11m,
+.contentRegionScroller_jnk11m {
+    background: transparent !important;
+}
+
+.switchIndicator_9AraPt,
+.vc-switch-container {
+    border-radius: 999px !important;
+    box-shadow: var(--liquid-glass-shadow) !important;
+}
